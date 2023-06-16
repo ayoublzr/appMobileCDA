@@ -30,11 +30,12 @@ const Register = () => {
     setEmailFocused(false);
   };
 
-  const handleCreateAccount = () => {
-    // Logique de création de compte ici
+
+
+
+  const handleReturn = () => {
+    navigation.goBack();
   };
-
-
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -50,7 +51,7 @@ const Register = () => {
         })
         .then((response) => {
           console.log(response.data);
-          navigation.navigate("login")
+          navigation.dispatch(navigation.navigate("login"))
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -155,6 +156,12 @@ const Register = () => {
           onPress={handleSubmit}
         >
           <Text style={styles.loginButtonText}>Créer un compte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleReturn}
+        >
+          <Text style={styles.loginButtonText}>Retour</Text>
         </TouchableOpacity>
       </View>
     </Background>

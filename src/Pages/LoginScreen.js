@@ -1,27 +1,45 @@
-import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Alert
-} from "react-native";
-import Background from "../components/Background";
-import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useState } from "react";
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, BackHandler, Alert} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 
+import Background from "../components/Background";
 import axios from "axios";
 
 const LoginScreen = () => {
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigation = useNavigation();
 
+  
+  useEffect(() => {
+    const backAction = () => {
+      if (isLoggedIn) {
+        Alert.alert(
+          'Notification',
+          "Veuillez vous déconnecter pour revenir à la page de connexion",
+          [{ text: 'OK' }],
+          { cancelable: true }
+        );
+        return true; // Prevent going back to login screen
+      }
+      return false; // Allow going back
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+  
+    return () => backHandler.remove(); // Clean up the event listener
+  }, [isLoggedIn]);
+  
   const handleEmailFocus = () => {
     setEmailFocused(true);
     setPasswordFocused(false);
@@ -34,14 +52,14 @@ const LoginScreen = () => {
 
   const handleCreateAccount = () => {
     navigation.navigate("register");
-    
   };
 
   const handleForgotPassword = () => {
-    // Logique de réinitialisation du mot de passe ici
+    navigation.navigate("ChangePassWord");
   };
 
   const handleSubmit = (event) => {
+    
     event.preventDefault();
 
     axios
@@ -53,7 +71,7 @@ const LoginScreen = () => {
         console.log(response);
         const token =JSON.stringify (response.data.token);
         SecureStore.setItemAsync("authToken", token);
-
+        setIsLoggedIn(true);
         navigation.navigate("MenuDrawer");
       })
       .catch((error) => {
@@ -90,15 +108,11 @@ const LoginScreen = () => {
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
           <Text style={styles.loginButtonText}>Connexion</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleCreateAccount}
-        >
+
+        <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
           <Text style={styles.loginButtonText}>Créer un compte</Text>
         </TouchableOpacity>
-        
-        
-        
+
         <View style={styles.linksContainer}>
           <TouchableOpacity onPress={handleForgotPassword}>
             <Text style={styles.linkText}>Mot de passe oublié</Text>
