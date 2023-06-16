@@ -1,65 +1,104 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Button,
-} from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
-
-
 
 function ProductsScreen({ navigation }) {
   const windowWidth = Dimensions.get("window").width;
   const itemWidth = (windowWidth - 40) / 2;
   const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://192.168.1.31:3003/api/products"
-      );
+      const response = await axios.get("http://192.168.1.31:3003/api/products");
       setProducts(response.data);
-      console.log(products);
+      setFilteredProducts(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://192.168.1.31:3003/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  useEffect(() => {
+    if (selectedCategory) {
+      axios
+        .get(`http://192.168.1.31:3003/api/products/categorie/${selectedCategory}`)
+        .then((res) => {
+          console.log(res.data);
+          setFilteredProducts(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [selectedCategory, products]);
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={{ flex: 1 }}>
+    <Picker
+  selectedValue={selectedCategory}
+  onValueChange={handleCategoryChange}
+>
+  <Picker.Item label="All Categories" value="" />
+  {categories.map((category) => (
+    <Picker.Item
+      key={category.id}
+      label={category.name}
+      value={category.id}
+    />
+  ))}
+</Picker>
+
       <ScrollView>
         <View style={styles.container}>
-          {products.map((product) => (
-            <View
-              key={product.id}
-              style={[styles.productGroup, { width: itemWidth }]}
-            >
-              <View style={styles.productContainer}>
-                <Image
-                  source={{
-                    uri: `http://192.168.1.31:3003/assets/uploads/${product.image}`,
-                  }}
-                  style={styles.image}
-                />
-                <Text style={styles.productName}>
-                  {product.name.toUpperCase()}
-                </Text>
+          {filteredProducts.length === 0 ? (
+            <Text>Aucun produit trouvé !</Text>
+          ) : (
+            filteredProducts.map((product) => (
+              <View
+                key={product.id}
+                style={[styles.productGroup, { width: itemWidth }]}
+              >
+                <View style={styles.productContainer}>
+                  <Image
+                    source={{
+                      uri:
+                        "http://192.168.1.31:3003/assets/uploads/" + product.image,
+                    }}
+                    style={styles.image}
+                  />
+                  <Text style={styles.productName}>
+                    {product.name.toUpperCase()}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
+            ))
+          )}
         </View>
       </ScrollView>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -69,7 +108,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   productGroup: {
-    marginTop: 10 ,
+    marginTop: 10,
     marginBottom: 10,
     marginRight: 10,
     position: "relative",
@@ -106,6 +145,5 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
 });
-
 
 export default ProductsScreen;

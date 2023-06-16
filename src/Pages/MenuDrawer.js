@@ -4,6 +4,7 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ProductsScreen from "./ProductsScreen"
+
 const MenuDrawer = () => {
     const Drawer = createDrawerNavigator();
     
@@ -11,7 +12,6 @@ const MenuDrawer = () => {
       <NavigationContainer independent={true}>
         <Drawer.Navigator  initialRouteName="ProductsScreen">
           <Drawer.Screen style={styles.drawer} name="Nos Produits" component={ProductsScreen} />
-          {/* <Drawer.Screen name="Notifications" component={NotificationsScreen} /> */}
         </Drawer.Navigator>
       </NavigationContainer>
     );
