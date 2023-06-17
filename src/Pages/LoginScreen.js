@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, BackHandler, Alert} from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  BackHandler,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-
+import Constants from "expo-constants";
 import Background from "../components/Background";
 import axios from "axios";
 
 const LoginScreen = () => {
- 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
@@ -16,30 +23,31 @@ const LoginScreen = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigation = useNavigation();
-
+  const { manifest } = Constants;
+  const URL = manifest.extra.URL;
   
   useEffect(() => {
     const backAction = () => {
       if (isLoggedIn) {
         Alert.alert(
-          'Notification',
+          "Notification",
           "Veuillez vous déconnecter pour revenir à la page de connexion",
-          [{ text: 'OK' }],
+          [{ text: "OK" }],
           { cancelable: true }
         );
         return true; // Prevent going back to login screen
       }
       return false; // Allow going back
     };
-  
+
     const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
+      "hardwareBackPress",
       backAction
     );
-  
+
     return () => backHandler.remove(); // Clean up the event listener
   }, [isLoggedIn]);
-  
+
   const handleEmailFocus = () => {
     setEmailFocused(true);
     setPasswordFocused(false);
@@ -57,22 +65,34 @@ const LoginScreen = () => {
   const handleForgotPassword = () => {
     navigation.navigate("ChangePassWord");
   };
-
   const handleSubmit = (event) => {
-    
     event.preventDefault();
 
+    axios;
     axios
-      .post("http://192.168.1.31:3003/api/login", {
+      .post(`${URL}/api/login`, {
         email,
         password,
       })
       .then((response) => {
         console.log(response);
-        const token =JSON.stringify (response.data.token);
-        SecureStore.setItemAsync("authToken", token);
-        setIsLoggedIn(true);
-        navigation.navigate("MenuDrawer");
+        const token = JSON.stringify(response.data.token);
+        SecureStore.setItemAsync("authToken", token)
+          .then(() => {
+            SecureStore.getItemAsync("authToken")
+              .then((storedToken) => {
+                setIsLoggedIn(true);
+                navigation.navigate("MenuDrawer");
+              })
+              .catch((error) => {
+                console.log(error);
+                // Gérer les erreurs
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+            // Gérer les erreurs
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -104,12 +124,15 @@ const LoginScreen = () => {
           onFocus={handlePasswordFocus}
           onBlur={() => setPasswordFocused(false)}
         />
-          
+
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
           <Text style={styles.loginButtonText}>Connexion</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleCreateAccount}
+        >
           <Text style={styles.loginButtonText}>Créer un compte</Text>
         </TouchableOpacity>
 

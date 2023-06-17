@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
+import Constants from "expo-constants";
 
 function ProductsScreen({ navigation }) {
   const windowWidth = Dimensions.get("window").width;
@@ -10,7 +11,8 @@ function ProductsScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-
+  const { manifest } = Constants;
+  const URL = manifest.extra.URL;
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -18,7 +20,7 @@ function ProductsScreen({ navigation }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://192.168.1.31:3003/api/products");
+      const response = await axios.get(`${URL}/api/products`);
       setProducts(response.data);
       setFilteredProducts(response.data);
     } catch (error) {
@@ -28,7 +30,7 @@ function ProductsScreen({ navigation }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://192.168.1.31:3003/api/categories");
+      const response = await axios.get(`${URL}/api/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error(error);

@@ -5,11 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Alert
+  Alert,
 } from "react-native";
 import Background from "../components/Background";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Constants from "expo-constants";
 
 import axios from "axios";
 
@@ -23,15 +24,14 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState([]);
+  const [isErrorPopupVisible, setIsErrorPopupVisible] = useState(false);
   const navigation = useNavigation();
-
+  const { manifest } = Constants;
+  const URL = manifest.extra.URL;
   const handlePasswordFocus = () => {
     setPasswordFocused(true);
     setEmailFocused(false);
   };
-
-
-
 
   const handleReturn = () => {
     navigation.goBack();
@@ -41,8 +41,9 @@ const Register = () => {
     event.preventDefault();
     const errors = validateForm();
     if (errors.length === 0) {
+      // Envoyer le formulaire
       axios
-        .post("http://192.168.1.31:3003/api/register", {
+        .post(`${URL}/api/register`, {
           username: username,
           email: email,
           phone: phone,
@@ -51,17 +52,21 @@ const Register = () => {
         })
         .then((response) => {
           console.log(response.data);
-          navigation.dispatch(navigation.navigate("login"))
+          navigation.dispatch(navigation.navigate("login"));
         })
         .catch((error) => {
           console.log(error.response.data);
           // Afficher un message d'erreur ou une notification pour l'utilisateur
         });
     } else {
+      // Afficher les erreurs dans la popup
       setErrors(errors);
+      setIsErrorPopupVisible(true);
     }
   };
-
+  const handleFieldFocus = () => {
+    setIsErrorPopupVisible(false);
+  };
   const validateForm = () => {
     const errors = [];
     if (!username.trim()) {
@@ -73,29 +78,30 @@ const Register = () => {
       errors.push("Le champ 'Email' n'est pas valide");
     }
     if (!phone.trim()) {
-      errors.push("Le champ 'Phone' est obligatoire");
+      errors.push("Le champ 'Numéro' est obligatoire");
     } else if (!/^\d+$/.test(phone)) {
-      errors.push("Le champ 'Phone' n'est pas valide");
+      errors.push("Le champ 'Numéro' n'est pas valide");
+    } else if (phone.length < 8) {
+      errors.push("Le champ 'Numéro' doit contenir au moins 8 chiffres");
     }
     if (!password.trim()) {
-      errors.push("Le champ 'Password' est obligatoire");
+      errors.push("Le champ 'Mot de passe' est obligatoire");
     } else if (password.length < 8) {
-      errors.push("Le champ 'Password' doit contenir au moins 8 caractères");
+      errors.push("Le champ 'Mot de passe' doit contenir au moins 8 caractères");
     }
     if (!repeatPassword.trim()) {
-      errors.push("Le champ 'Repeat password' est obligatoire");
+      errors.push("Le champ 'Mot de passe' est obligatoire");
     } else if (repeatPassword !== password) {
       errors.push(
-        "Les champs 'Password' et 'Repeat password' doivent correspondre"
+        "Les champs 'Mot de passe' et 'Mot de passe' doivent correspondre"
       );
     }
     return errors;
   };
 
-
-
   return (
     <Background>
+
       <View style={styles.card}>
         <View style={styles.avatarContainer}>
           <Ionicons name="person-circle-outline" size={70} color="black" />
@@ -106,8 +112,9 @@ const Register = () => {
           placeholder="Nom"
           value={username}
           onChangeText={setUsername}
-          onFocus={() => setEmailFocused(false)}
+          
           onBlur={() => setEmailFocused(false)}
+          onFocus={handleFieldFocus}
         />
 
         <TextInput
@@ -115,7 +122,7 @@ const Register = () => {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          onFocus={() => setEmailFocused(true)}
+          onFocus={handleFieldFocus}
           onBlur={() => setEmailFocused(false)}
         />
         <TextInput
@@ -123,7 +130,7 @@ const Register = () => {
           placeholder="Numéro"
           value={phone}
           onChangeText={setPhone}
-          onFocus={() => setPhoneFocused(true)}
+          onFocus={handleFieldFocus}
           onBlur={() => setPhoneFocused(false)}
         />
 
@@ -133,7 +140,7 @@ const Register = () => {
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
-          
+          onFocus={handleFieldFocus}
         />
         <TextInput
           style={[styles.input, passwordFocused && styles.inputFocused]}
@@ -141,29 +148,24 @@ const Register = () => {
           secureTextEntry={true}
           value={repeatPassword}
           onChangeText={setRepeatPassword}
-          onFocus={handlePasswordFocus}
+          onFocus={handleFieldFocus}
           onBlur={() => setPasswordFocused(false)}
         />
-          {errors.includes("Le champ 'Email' est obligatoire") && (
-            <Alert variant="danger">Le champ 'Email' est obligatoire</Alert>
-          )}
-          {errors.includes("Le champ 'Email' n'est pas valide") && (
-            <Alert variant="danger">Le champ 'Email' n'est pas valide</Alert>
-          )}
-
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleSubmit}
-        >
+ 
+ {isErrorPopupVisible && (
+  <View style={styles.errorPopup}>
+    <Text style={styles.errorText}>Une erreur s'est produite. Veuillez vérifier les champs.</Text>
+  </View>
+)}
+        <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
           <Text style={styles.loginButtonText}>Créer un compte</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleReturn}
-        >
+        <TouchableOpacity style={styles.loginButton} onPress={handleReturn}>
           <Text style={styles.loginButtonText}>Retour</Text>
         </TouchableOpacity>
+   
       </View>
+  
     </Background>
   );
 };
@@ -216,6 +218,19 @@ const styles = StyleSheet.create({
   linkText: {
     color: "black",
     textDecorationLine: "underline",
+  },
+ errorPopup: {
+    
+    top: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 20,
+    backgroundColor: "red",
+    padding: 10,
+  },
+  errorText: {
+    color: "white",
+    textAlign: "center",
   },
 });
 
