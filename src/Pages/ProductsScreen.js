@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
+import '../components/global'
 
 function ProductsScreen({ navigation }) {
   const windowWidth = Dimensions.get("window").width;
@@ -18,7 +19,7 @@ function ProductsScreen({ navigation }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://192.168.1.31:3003/api/products");
+      const response = await axios.get("http://"+global.myIpAdress+":"+global.myPort+"/api/products");
       setProducts(response.data);
       setFilteredProducts(response.data);
     } catch (error) {
@@ -28,7 +29,7 @@ function ProductsScreen({ navigation }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://192.168.1.31:3003/api/categories");
+      const response = await axios.get("http://"+global.myIpAdress+":"+global.myPort+"/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error(error);
@@ -42,7 +43,7 @@ function ProductsScreen({ navigation }) {
   useEffect(() => {
     if (selectedCategory) {
       axios
-        .get(`http://192.168.1.31:3003/api/products/categorie/${selectedCategory}`)
+        .get(`http://${global.myIpAdress}:${global.myPort}/api/products/categorie/${selectedCategory}`)
         .then((res) => {
           console.log(res.data);
           setFilteredProducts(res.data);
@@ -83,7 +84,7 @@ function ProductsScreen({ navigation }) {
                   <Image
                     source={{
                       uri:
-                        "http://192.168.1.31:3003/assets/uploads/" + product.image,
+                        "http://"+global.myIpAdress+":"+global.myPort+"/assets/uploads/" + product.image,
                     }}
                     style={styles.image}
                   />

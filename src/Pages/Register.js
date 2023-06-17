@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import axios from "axios";
+import '../components/global'
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -42,7 +43,7 @@ const Register = () => {
     const errors = validateForm();
     if (errors.length === 0) {
       axios
-        .post("http://192.168.1.31:3003/api/register", {
+        .post("http://"+global.myIpAdress+":"+global.myPort+"/api/register", {
           username: username,
           email: email,
           phone: phone,

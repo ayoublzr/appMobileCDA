@@ -6,9 +6,10 @@ import * as SecureStore from "expo-secure-store";
 
 import Background from "../components/Background";
 import axios from "axios";
+import '../components/global'
 
 const LoginScreen = () => {
- 
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
@@ -61,9 +62,10 @@ const LoginScreen = () => {
   const handleSubmit = (event) => {
     
     event.preventDefault();
+    
 
     axios
-      .post("http://192.168.1.31:3003/api/login", {
+      .post("http://"+global.myIpAdress+":"+global.myPort+"/api/login", {
         email,
         password,
       })
@@ -106,7 +108,7 @@ const LoginScreen = () => {
         />
           
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
-          <Text style={styles.loginButtonText}>Connexion</Text>
+          <Text style={styles.loginButtonText}>Connexion </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleCreateAccount}>
