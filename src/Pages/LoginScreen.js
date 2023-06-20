@@ -65,40 +65,27 @@ const LoginScreen = () => {
   const handleForgotPassword = () => {
     navigation.navigate("ChangePassWord");
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    axios;
-    axios
-      .post(`${URL}/api/login`, {
+  
+    try {
+      const response = await axios.post(`${URL}/api/login`, {
         email,
         password,
-      })
-      .then((response) => {
-        console.log(response);
-        const token = JSON.stringify(response.data.token);
-        SecureStore.setItemAsync("authToken", token)
-          .then(() => {
-            SecureStore.getItemAsync("authToken")
-              .then((storedToken) => {
-                setIsLoggedIn(true);
-                navigation.navigate("MenuDrawer");
-              })
-              .catch((error) => {
-                console.log(error);
-                // Gérer les erreurs
-              });
-          })
-          .catch((error) => {
-            console.log(error);
-            // Gérer les erreurs
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-        // Afficher un message d'erreur ou une notification pour l'utilisateur
-        setErrorMessage("Email ou mot de passe incorrect");
       });
+  
+      const token = JSON.stringify(response.data.token);
+  
+      await SecureStore.setItemAsync("authToken", token);
+  
+  
+      setIsLoggedIn(true);
+      navigation.navigate("MenuDrawer");
+    } catch (error) {
+      console.log(error);
+      // Gérer les erreurs
+      setErrorMessage("Email ou mot de passe incorrect");
+    }
   };
   return (
     <Background>

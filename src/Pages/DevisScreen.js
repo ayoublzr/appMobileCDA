@@ -120,7 +120,7 @@ function DevisScreen() {
 
     // Envoyer la requête pour créer le devis
     axios
-      .post(`${URL}:3003/api/devis`, devisData)
+      .post(`${URL}/api/devis`, devisData)
       .then((res) => {
         const devisId = res.data.id; // Récupérer l'ID du devis créé
 

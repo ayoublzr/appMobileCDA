@@ -154,7 +154,7 @@ const Register = () => {
  
  {isErrorPopupVisible && (
   <View style={styles.errorPopup}>
-    <Text style={styles.errorText}>Une erreur s'est produite. Veuillez vérifier les champs.</Text>
+    <Text style={styles.errorText}>{errors[0]}</Text>
   </View>
 )}
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
