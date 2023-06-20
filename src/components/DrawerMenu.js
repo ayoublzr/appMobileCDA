@@ -3,12 +3,15 @@ import { View, Text, TouchableOpacity , StyleSheet} from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import Constants from "expo-constants";
 const MenuDrawer = () => {
-  
+    const { manifest } = Constants;
+    const URL = manifest.extra.URL;
     const navigation = useNavigation();
-
-    const handleProdudt = () => {
+    
+    const handleProduct = () => {
         navigation.dispatch(DrawerActions.closeDrawer());
         navigation.navigate("Nos Produits");
   };
@@ -16,21 +19,39 @@ const MenuDrawer = () => {
         navigation.dispatch(DrawerActions.closeDrawer());
         navigation.navigate("Devis");
   };
-  const handleLogout = () => {
-        navigation.dispatch(DrawerActions.closeDrawer());
+ 
+
+  const handleLogout = async () => {
+    try {
+      const myToken = await SecureStore.getItemAsync('authToken');
+      
+      await SecureStore.deleteItemAsync('authToken');
+    
+        await axios.get(`${URL}/api/logout`,{
+            headers: {
+                Authorization: myToken,
+              },
+          });
+  
+          navigation.dispatch(DrawerActions.closeDrawer());
         navigation.reset({
             index: 0,
             routes: [{ name: 'login' }], 
       });
+     
+    } catch (error) {
+      console.log(error);
+      alert("Erreur lors de la déconnexion");
+    }
   };
 
   return (
     <View >
-      {/* Drawer menu items */}
+      
       <View style={styles.menuItemTitle}> 
         <Text style={styles.menuItemTitleText} >Menu</Text>
       </View>
-      <TouchableOpacity style={styles.menuItem} onPress={handleProdudt}>
+      <TouchableOpacity style={styles.menuItem} onPress={handleProduct}>
         <View style={styles.menuItemContent}> 
         <Icon name="cubes" size={16} color="#333" style={styles.menuItemIcon} />
         <Text style={styles.menuItemText}>Mes Produits</Text>
