@@ -80,7 +80,7 @@ const LoginScreen = () => {
   
   
       setIsLoggedIn(true);
-      navigation.navigate("MenuDrawer");
+      navigation.navigate("Slide");
     } catch (error) {
       console.log(error);
       // Gérer les erreurs

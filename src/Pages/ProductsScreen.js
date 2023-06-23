@@ -44,7 +44,7 @@ function ProductsScreen({ navigation }) {
   useEffect(() => {
     if (selectedCategory) {
       axios
-        .get(`http://192.168.1.31:3003/api/products/categorie/${selectedCategory}`)
+        .get(`${URL}/api/products/categorie/${selectedCategory}`)
         .then((res) => {
           console.log(res.data);
           setFilteredProducts(res.data);
@@ -85,7 +85,7 @@ function ProductsScreen({ navigation }) {
                   <Image
                     source={{
                       uri:
-                        "http://192.168.1.31:3003/assets/uploads/" + product.image,
+                        URL+"/assets/uploads/"+ product.image,
                     }}
                     style={styles.image}
                   />

@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 import Constants from "expo-constants";
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TextInput,
-  Button
+  Button,
+  TouchableOpacity
 } from "react-native";
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
@@ -180,82 +183,112 @@ function DevisScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View >
       <ScrollView>
         <View style={styles.formContainer}>
-          {forms.map((form, index) => (
-            <View key={index} style={styles.formItem}>
-              <Picker
-                selectedValue={form.categorie}
-                onValueChange={(value) => handleCategoryChange(value, index)}
-              >
-                <Picker.Item label="Catégorie" value="" enabled={false} />
-                {categories.map((categorie) => (
-                  <Picker.Item
-                    key={categorie.id}
-                    label={categorie.name}
-                    value={categorie.id}
-                  />
-                ))}
-              </Picker>
-              <Picker
-                selectedValue={form.product}
-                onValueChange={(value) => handleProductChange(value, index)}
-              >
-                <Picker.Item label="Produit" value="" enabled={false} />
-                {produits[index]?.map((produit) => (
-                  <Picker.Item
-                    key={produit.id}
-                    label={produit.name}
-                    value={produit.id}
-                  />
-                ))}
-              </Picker>
+          {
+          forms.map((form, index) => (
+            <View key={index}>
               <View style={styles.inputGroup}>
-                <Text>Surface</Text>
+              {
+              index >= 0 && (
+                
+                  <Text style={styles.textProduit}>Produit n° {index + 1}</Text>
+                
+              )}
+              </View>
+              <View>
+                <Picker
+                  selectedValue={form.categorie}
+                  onValueChange={(value) => handleCategoryChange(value, index)}>
+                  <Picker.Item label="Catégorie" value="" enabled={false} />
+                  {categories.map((categorie) => (
+                    <Picker.Item
+                      key={categorie.id}
+                      label={categorie.name}
+                      value={categorie.id}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <View>
+                <Picker
+                  selectedValue={form.product}
+                  onValueChange={(value) => handleProductChange(value, index)}
+                >
+                  <Picker.Item label="Produit" value="" enabled={false} />
+                  {produits[index]?.map((produit) => (
+                    <Picker.Item
+                      key={produit.id}
+                      label={produit.name}
+                      value={produit.id}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.text}>Surface:</Text>
                 <TextInput
                   style={styles.input}
                   keyboardType="numeric"
                   value={form.surface}
                   onChangeText={(value) => handleSurfaceChange(value, index)}
                 />
-                <Text>m2</Text>
+                <Text style={styles.text} >m²</Text>
               </View>
-              <View style={styles.floatingLabel}>
-                <Text style={styles.label}>Comments</Text>
+              <View>
+                <Text style={styles.text}>Détails:</Text>
                 <TextInput
-                  style={styles.textarea}
+                  style={styles.inputLarge}
                   multiline
-                  placeholder="Leave a comment here"
+                  numberOfLines={3}
+                  placeholder="Ajoutez plus de détails"
                   value={form.description}
                   onChangeText={(value) =>
                     handleDescriptionChange(value, index)
                   }
                 />
               </View>
-              {index > 0 && (
-                <Button
-                  title="Supprimer"
-                  onPress={() => handleRemoveForm(index)}
-                />
+              {forms.length === 1 ? (
+                <View>
+                <TouchableOpacity style={(index == 0)?styles.buttonPerso:styles.button} onPress={handleAddForm}>
+                  <Text style={styles.buttonText}>Ajouter un produit</Text>
+                </TouchableOpacity>
+              </View> ) : (
+              
+              <View style={styles.buttonContainer}>
+                <View>
+                  <TouchableOpacity style={(index == 0)?styles.buttonPerso:styles.button} onPress={handleAddForm}>
+                    <Text style={styles.buttonText}>Ajouter un produit</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity style={styles.buttonDelete} onPress={() => handleRemoveForm(index)}>
+                    <Text style={styles.buttonText}>Supprimer ce produit</Text>
+                  </TouchableOpacity>
+                </View>
+              </View> 
               )}
+                
+              
             </View>
-          ))}
-          <Button
-            title="Ajouter un produit"
-            onPress={handleAddForm}
-          />
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Commentaire :</Text>
-            <TextInput
-              style={styles.textarea}
-              multiline
-              numberOfLines={3}
-              value={commentaire}
-              onChangeText={handleCommentaireChange}
-            />
-          </View>
-          <Button title="Envoyer" onPress={handleSubmit} />
+            ))}
+              <View>
+                <Text style={styles.text}>Commentaire:</Text>
+                  <TextInput
+                    style={styles.inputLarge}
+                    multiline
+                    numberOfLines={3}
+                    value={commentaire}
+                    placeholder="Ajoutez un commentaire"
+                    onChangeText={handleCommentaireChange}
+                  />
+              </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonPerso} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Envoyer</Text>
+                </TouchableOpacity>
+              </View>
         </View>
       </ScrollView>
     </View>
@@ -263,48 +296,83 @@ function DevisScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
   formContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  formItem: {
-    marginBottom: 20,
+    flex:1,
+    alignItems: "stretch",
   },
   inputGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: "row"
   },
   input: {
     flex: 1,
-    height: 40,
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "#000",
     borderRadius: 5,
-    paddingHorizontal: 10,
-    marginRight: 10,
+    paddingStart:5
   },
-  floatingLabel: {
-    marginBottom: 10,
-  },
-  label: {
-    marginBottom: 5,
-  },
-  textarea: {
-    height: 100,
+
+  inputLarge: { 
+    textAlignVertical:"top",
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "#000",
     borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingTop: 10,
+    margin:10,
+    padding:5,
+    
   },
-  formGroup: {
-    marginBottom: 20,
+
+  text: {
+    margin: 10
   },
+  textProduit: {
+    fontSize:15,
+    fontWeight: "bold",
+    color:"#000",
+    margin: 10
+  },
+  button: {
+    backgroundColor: "black",
+    borderRadius: 5,
+    padding: 10,
+    margin:10,
+  },
+  buttonPerso: {
+    backgroundColor: "black",
+    borderRadius: 5,
+    padding: 10,
+    margin:10,
+    width:"96%"
+  },
+  buttonDelete: {
+    backgroundColor: "#B40404",
+    borderRadius: 5,
+    padding: 10,
+    margin:10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  buttonContainer:{
+    flex:1,
+    justifyContent: 'space-evenly',
+    //alignItems: 'center',
+    flexDirection: "row",
+    
+  },
+  linksContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  linkText: {
+    color: "black",
+    textDecorationLine: "underline",
+  },
+  
 });
 
 export default DevisScreen;
