@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, SafeAreaView, StyleSheet } from 'react-native';
-
+import SplashScreen from './src/Pages/SplashScreen';
 import LoginScreen from "./src/Pages/LoginScreen";
 import MenuDrawer from "./src/Pages/MenuDrawer";
 import Register from "./src/Pages/Register";
@@ -18,6 +18,11 @@ export default function App() {
       {
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+              name="Spalsh"
+              component={SplashScreen}
+              options={{ title: "Spalsh" }}
+            />
             <Stack.Screen
               name="login"
               component={LoginScreen}
