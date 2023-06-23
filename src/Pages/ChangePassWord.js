@@ -2,18 +2,43 @@ import React, { useState } from "react";
 import { View, TextInput, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import Background from "../components/Background";
-
+import Constants from "expo-constants";
+import axios from "axios";
 const ChangePassWord = () => {
     const [email, setEmail] = useState("");
+    const [showMessage, setShowMessage] = useState(false);
     const navigation = useNavigation();
-    const handleSubmit = () => {
-        //TODO envoyer un email pour récupérer le mot de passe
-        navigation.dispatch(navigation.navigate("login"));
+    const { manifest } = Constants;
+    
+  const URL = manifest.extra.URL;
+    const handleSubmit = (event) => {
+      event.preventDefault();
+  
+      axios
+        .post(`${URL}/api/resetpassword/`, {
+          email: email,
+        })
+        .then((response) => {
+          console.log(response.data);
+          setShowMessage(true); // Afficher le message avant la navigation
+  
+          setTimeout(() => {
+            setShowMessage(false); // Masquer le message après 3 secondes
+            navigation.dispatch(navigation.navigate("login")) // Naviguer vers la page de connexion
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
     };
     return (
     <Background>
       <View style={styles.card}>
-
+      {showMessage && (
+  <View style={[styles.popup]}>
+    <Text  style={[styles.message]}>Veuillez vérifier votre adresse e-mail pour modifier votre mot de passe.</Text>
+  </View>
+)}
         <Text style={styles.Text}>Récupérer mon mot de passe </Text>
         <TextInput
           style={[styles.input]}
@@ -76,6 +101,19 @@ const ChangePassWord = () => {
       textAlign: "center",
       fontWeight: "bold",
 
+    },
+    popup: {
+    
+      top: 0,
+      left: 0,
+      right: 0,
+      borderRadius: 20,
+      backgroundColor: "green",
+      padding: 10,
+    },
+    message: {
+      color: "white",
+      textAlign: "center",
     },
   });
 
