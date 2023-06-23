@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -9,6 +8,7 @@ import ProductsScreen from "./ProductsScreen"
 import DevisScreen from "./DevisScreen";
 
 const Tab = createMaterialTopTabNavigator();
+
 
 const TabNavigator = () => (
   <Tab.Navigator

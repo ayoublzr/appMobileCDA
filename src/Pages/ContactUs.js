@@ -7,7 +7,6 @@ import {
 
 
 const ContactUs = () => {
-
   return (
    
             <Text >Contactez-nous</Text>
