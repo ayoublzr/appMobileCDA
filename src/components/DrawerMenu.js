@@ -25,14 +25,14 @@ const MenuDrawer = () => {
     try {
       const myToken = await SecureStore.getItemAsync('authToken');
       
-      await SecureStore.deleteItemAsync('authToken');
     
         await axios.get(`${URL}/api/logout`,{
-            headers: {
-                Authorization: myToken,
-              },
+          headers: {
+            Authorization: `Bearer ${myToken}`, // Ajoutez "Bearer " avant le token
+          },
           });
-  
+          
+          await SecureStore.deleteItemAsync('authToken');
           navigation.dispatch(DrawerActions.closeDrawer());
         navigation.reset({
             index: 0,

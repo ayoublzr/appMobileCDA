@@ -18,10 +18,10 @@ import axios from "axios";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isErrorPopupVisible, setIsErrorPopupVisible] = useState(false);
   const navigation = useNavigation();
   const { manifest } = Constants;
   const URL = manifest.extra.URL;
@@ -48,16 +48,7 @@ const LoginScreen = () => {
     return () => backHandler.remove(); // Clean up the event listener
   }, [isLoggedIn]);
 
-  const handleEmailFocus = () => {
-    setEmailFocused(true);
-    setPasswordFocused(false);
-  };
-
-  const handlePasswordFocus = () => {
-    setEmailFocused(false);
-    setPasswordFocused(true);
-  };
-
+ 
   const handleCreateAccount = () => {
     navigation.navigate("register");
   };
@@ -85,8 +76,17 @@ const LoginScreen = () => {
       console.log(error);
       // Gérer les erreurs
       setErrorMessage("Email ou mot de passe incorrect");
+      setIsErrorPopupVisible(true);
     }
   };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  const handleFieldFocus = () => {
+    setIsErrorPopupVisible(false);
+  };
+
   return (
     <Background>
       <View style={styles.card}>
@@ -94,24 +94,39 @@ const LoginScreen = () => {
           <Ionicons name="person-circle-outline" size={70} color="black" />
         </View>
         <TextInput
-          style={[styles.input, emailFocused && styles.inputFocused]}
+          style={styles.input}
           placeholder="Adresse e-mail"
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          onFocus={handleEmailFocus}
-          onBlur={() => setEmailFocused(false)}
+          onFocus={handleFieldFocus}
+          
         />
-        <TextInput
-          style={[styles.input, passwordFocused && styles.inputFocused]}
-          placeholder="Mot de passe"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-          onFocus={handlePasswordFocus}
-          onBlur={() => setPasswordFocused(false)}
-        />
-
+       
+         <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={{flex:1}}
+            placeholder="Mot de passe"
+            value={password}
+            onChangeText={setPassword}
+            onFocus={handleFieldFocus}
+            
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity onPress={toggleShowPassword}>
+            <Ionicons
+              style={styles.showPasswordIcon}
+              name={showPassword ? "eye-off" : "eye"}
+              size={24}
+              color="#333"
+            />
+          </TouchableOpacity>
+        </View>
+{isErrorPopupVisible && (
+  <View style={styles.errorPopup}>
+    <Text style={styles.errorText}>{errorMessage}</Text>
+  </View>
+)}
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
           <Text style={styles.loginButtonText}>Connexion</Text>
         </TouchableOpacity>
@@ -160,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   inputFocused: {
-    borderColor: "black", // Couleur de la bordure lorsqu'il est cliqué
+    borderColor: "black", 
   },
   loginButton: {
     backgroundColor: "black",
@@ -181,6 +196,34 @@ const styles = StyleSheet.create({
   linkText: {
     color: "black",
     textDecorationLine: "underline",
+  },
+  passwordInputContainer: {
+    height: 40,
+    flexDirection: "row",
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    justifyContent:'space-between'
+  },
+  showPasswordIcon: {
+    marginLeft: 10,
+    alignItems: "flex-end",
+  },
+  errorPopup: {
+    
+    top: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 20,
+    backgroundColor: "red",
+    padding: 10,
+  },
+  errorText: {
+    color: "white",
+    textAlign: "center",
   },
 });
 
