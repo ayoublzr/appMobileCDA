@@ -8,6 +8,7 @@ import MenuDrawer from "./src/Pages/MenuDrawer";
 import Register from "./src/Pages/Register";
 import ChangePassWord from "./src/Pages/ChangePassWord";
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
               component={ChangePassWord}
               options={{ title: "ChangePassWord" }}
             />
+           
 
           </Stack.Navigator>
         </NavigationContainer>

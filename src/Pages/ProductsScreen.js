@@ -3,14 +3,17 @@ import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-nat
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 import Constants from "expo-constants";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-function ProductsScreen({ navigation }) {
+function ProductsScreen() {
   const windowWidth = Dimensions.get("window").width;
   const itemWidth = (windowWidth - 40) / 2;
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const navigation = useNavigation();
   const { manifest } = Constants;
   const URL = manifest.extra.URL;
   useEffect(() => {
@@ -55,6 +58,11 @@ function ProductsScreen({ navigation }) {
     }
   }, [selectedCategory, products]);
 
+  const navigateToProductDetails = (productId) => {
+    
+    navigation.navigate("ProductDetailsScreen", { productId });
+
+  };
   return (
     <View style={{ flex: 1 }}>
     <Picker
@@ -81,18 +89,21 @@ function ProductsScreen({ navigation }) {
                 key={product.id}
                 style={[styles.productGroup, { width: itemWidth }]}
               >
+                  <TouchableOpacity onPress={() => navigateToProductDetails(product.id)}>
                 <View style={styles.productContainer}>
                   <Image
                     source={{
                       uri:
                         "http://192.168.1.31:3003/assets/uploads/" + product.image,
                     }}
+                    
                     style={styles.image}
                   />
                   <Text style={styles.productName}>
                     {product.name.toUpperCase()}
                   </Text>
                 </View>
+                  </TouchableOpacity>
               </View>
             ))
           )}
