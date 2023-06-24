@@ -321,9 +321,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     margin:10,
     padding:5,
-    
   },
-
   text: {
     margin: 10
   },

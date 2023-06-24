@@ -4,13 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, SafeAreaView, StyleSheet } from 'react-native';
 
 import LoginScreen from "./src/Pages/LoginScreen";
-import MenuDrawer from "./src/Pages/MenuDrawer";
 import Register from "./src/Pages/Register";
 import ChangePassWord from "./src/Pages/ChangePassWord";
 import PersonalInfo from "./src/Pages/PersonalInfo"
 import Slide from "./src/Pages/Slide";
 import AboutUs from "./src/Pages/AboutUs";
 import ContactUs from "./src/Pages/ContactUs";
+import ProductDetailsScreen from "./src/Pages/ProductDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,11 +27,6 @@ export default function App() {
               name="login"
               component={LoginScreen}
               options={{ title: "Login" }}
-            />
-            <Stack.Screen
-              name="MenuDrawer"
-              component={MenuDrawer}
-              options={{ title: "MenuDrawer" }}
             />
             <Stack.Screen
               name="PersonalInfo"
@@ -62,6 +57,11 @@ export default function App() {
               name="Slide"
               component={Slide}
               options={{ title: "Slide" }}
+            />
+            <Stack.Screen
+              name="ProductDetailsScreen"
+              component={ProductDetailsScreen}
+              options={{ title: "ProductDetailsScreen" }}
             />
 
           </Stack.Navigator>

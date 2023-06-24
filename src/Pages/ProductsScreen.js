@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions, TouchableWithoutFeedback } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import axios from "axios";
 import Constants from "expo-constants";
+import { useNavigation } from "@react-navigation/native";
+import ImageSwiper from "../components/ImageSwiper";
 
-function ProductsScreen({ navigation }) {
+function ProductsScreen() {
   const windowWidth = Dimensions.get("window").width;
   const itemWidth = (windowWidth - 40) / 2;
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const navigation = useNavigation();
   const { manifest } = Constants;
   const URL = manifest.extra.URL;
+  
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -55,21 +59,26 @@ function ProductsScreen({ navigation }) {
     }
   }, [selectedCategory, products]);
 
+  const navigateToProductDetails = (productId) => {
+    navigation.navigate("ProductDetailsScreen", { productId });
+  };
+
   return (
     <View style={{ flex: 1 }}>
-    <Picker
-  selectedValue={selectedCategory}
-  onValueChange={handleCategoryChange}
->
-  <Picker.Item label="All Categories" value="" />
-  {categories.map((category) => (
-    <Picker.Item
-      key={category.id}
-      label={category.name}
-      value={category.id}
-    />
-  ))}
-</Picker>
+      <ImageSwiper></ImageSwiper>
+      <Picker
+        selectedValue={selectedCategory}
+        onValueChange={handleCategoryChange}
+      >
+        <Picker.Item label="All Categories" value="" />
+        {categories.map((category) => (
+          <Picker.Item
+            key={category.id}
+            label={category.name}
+            value={category.id}
+          />
+        ))}
+      </Picker>
 
       <ScrollView>
         <View style={styles.container}>
@@ -81,18 +90,19 @@ function ProductsScreen({ navigation }) {
                 key={product.id}
                 style={[styles.productGroup, { width: itemWidth }]}
               >
-                <View style={styles.productContainer}>
-                  <Image
-                    source={{
-                      uri:
-                        URL+"/assets/uploads/"+ product.image,
-                    }}
-                    style={styles.image}
-                  />
-                  <Text style={styles.productName}>
-                    {product.name.toUpperCase()}
-                  </Text>
-                </View>
+                <TouchableWithoutFeedback onPress={() => navigateToProductDetails(product.id)}>
+                  <View style={styles.productContainer}>
+                    <Image
+                      source={{
+                        uri: URL + "/assets/uploads/" + product.image,
+                      }}
+                      style={styles.image}
+                    />
+                    <Text style={styles.productName}>
+                      {product.name.toUpperCase()}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
             ))
           )}

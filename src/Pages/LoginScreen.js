@@ -28,7 +28,7 @@ const LoginScreen = () => {
   
   useEffect(() => {
     const backAction = () => {
-      if (isLoggedIn) {
+      if (isLoggedIn && false) {
         Alert.alert(
           "Notification",
           "Veuillez vous déconnecter pour revenir à la page de connexion",

@@ -1,5 +1,5 @@
 {
-  "name": "myappmobile",
+  "name": "slq",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -12,7 +12,6 @@
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@react-native-community/blur": "^4.3.2",
     "@react-native-picker/picker": "^2.4.10",
-    "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/material-top-tabs": "^6.6.3",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.12",
