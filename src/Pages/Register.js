@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Alert,
+  
 } from "react-native";
 import Background from "../components/Background";
 import { Ionicons } from "@expo/vector-icons";

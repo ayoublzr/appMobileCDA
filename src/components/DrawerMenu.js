@@ -63,6 +63,7 @@ const MenuDrawer = () => {
         <Text style={styles.menuItemText}>Demandez un devis</Text>
         </View>
       </TouchableOpacity>
+      
       <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
       <View style={styles.menuItemContent}> 
         <Icon name="sign-out" size={20} color="#F77" style={styles.menuItemIcon} />
