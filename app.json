@@ -22,18 +22,28 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ayoublazaar.myAppMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "packagerOpts": {
-      "sourceExts": [ "js", "json", "ts", "tsx", "jsx", "vue"],
+      "sourceExts": [
+        "js",
+        "json",
+        "ts",
+        "tsx",
+        "jsx",
+        "vue"
+      ],
       "config": "metro.config.js"
-
     },
     "extra": {
-      "URL": "http://192.168.1.31:3003"
+      "URL": "https://back.ayoublazaar.com",
+      "eas": {
+        "projectId": "d142b57b-59b2-4dfb-8579-da863c4bc879"
+      }
     }
   }
 }

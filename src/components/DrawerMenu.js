@@ -19,6 +19,14 @@ const MenuDrawer = () => {
         navigation.dispatch(DrawerActions.closeDrawer());
         navigation.navigate("Devis");
   };
+  const handleAboutUs = () => {
+        navigation.dispatch(DrawerActions.closeDrawer());
+        navigation.navigate("À PROPOS");
+  };
+  const handleContactUs = () => {
+        navigation.dispatch(DrawerActions.closeDrawer());
+        navigation.navigate("Contacter nous");
+  };
  
 
   const handleLogout = async () => {
@@ -61,6 +69,18 @@ const MenuDrawer = () => {
       <View style={styles.menuItemContent}> 
         <Icon name="file" size={20} color="#36F" style={styles.menuItemIcon} />
         <Text style={styles.menuItemText}>Demandez un devis</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.menuItem} onPress={handleAboutUs}>
+      <View style={styles.menuItemContent}> 
+        <Icon name="file" size={20} color="#36F" style={styles.menuItemIcon} />
+        <Text style={styles.menuItemText}>À PROPOS</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.menuItem} onPress={handleContactUs}>
+      <View style={styles.menuItemContent}> 
+        <Icon name="file" size={20} color="#36F" style={styles.menuItemIcon} />
+        <Text style={styles.menuItemText}>Contacter nous</Text>
         </View>
       </TouchableOpacity>
       
